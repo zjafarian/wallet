@@ -1,0 +1,56 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+server:
+  port: 9092
+  servlet:
+    context-path: /wallet
+  ssl:
+    enabled: false
+
+
+
+
+
+spring:
+  devtools:
+    restart:
+      enabled: false
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    time-zone: UTC
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+
+
+  main:
+    allow-bean-definition-overriding: true
+
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    url: jdbc:h2:mem:wallet
+    username: wallet_admin
+    password: Wa@123456
+    driver-class-name: org.h2.Driver
+
+
+
+
+
+
+

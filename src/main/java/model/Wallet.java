@@ -28,6 +28,8 @@ public class Wallet  extends BaseEntity{
     @Column(name = "total_balance")
     private Long totalBalance;
 
-
+    @ManyToOne
+    @JoinColumn(name = "profile_id", referencedColumnName="id")
+    private Profile profile;
 
 }

@@ -31,8 +31,8 @@ public class Profile extends BaseEntity {
     @Column(name = "mobile")
     private String mobile;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "national_code")
+    private String nationalCode;
 
     @Column(name = "password")
     private String password;

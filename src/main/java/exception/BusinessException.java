@@ -6,17 +6,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BusinessException extends ResponsibleRuntimeException implements Responsible {
 
-    public BusinessException(String message) {
-        super(message);
-    }
+
 
     public BusinessException(String message, int code) {
         super(message, code);
     }
 
-    public BusinessException(String message, Throwable cause) {
-        super(message, cause);
-    }
 
     public BusinessException(String message, Throwable cause, int code) {
         super(message, cause, code);

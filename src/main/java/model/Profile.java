@@ -37,4 +37,7 @@ public class Profile extends BaseEntity {
     @Column(name = "password")
     private String password;
 
+
+
+
 }

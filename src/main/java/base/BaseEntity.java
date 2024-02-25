@@ -45,4 +45,7 @@ public abstract class BaseEntity {
     @Column(name = "is_deleted", columnDefinition = "boolean default false")
     private Boolean isDeleted = false;
 
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private Boolean isActive = true;
+
 }

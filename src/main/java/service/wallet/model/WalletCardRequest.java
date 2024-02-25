@@ -2,11 +2,15 @@ package service.wallet.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 import model.Financier;
 import model.WalletCardType;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class WalletCardRequest {
 
     @NotNull
@@ -17,6 +21,7 @@ public class WalletCardRequest {
 
     @NotBlank
     private String title;
+
 
     private WalletCardType walletCardType;
 

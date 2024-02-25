@@ -3,11 +3,12 @@ package model;
 import base.ValueEnum;
 
 public enum TransactionStatus implements ValueEnum<Integer> {
-    Create(0),
-    Processing(1),
-    Failed(2),
-    Succeed(3),
-    Canceled(4);
+    CREATE(0),
+    PROCESSING(1),
+    SUCCEED(2),
+    FAILED(3),
+    NOT_VERIFIED(4),
+    REVERSE(5);
 
     private final Integer code;
 
@@ -17,11 +18,12 @@ public enum TransactionStatus implements ValueEnum<Integer> {
 
     public static TransactionStatus valueOf(Integer code) {
         return switch (code) {
-            case 0 -> TransactionStatus.Create;
-            case 1 -> TransactionStatus.Processing;
-            case 2 -> TransactionStatus.Failed;
-            case 3 -> TransactionStatus.Succeed;
-            case 4 -> TransactionStatus.Canceled;
+            case 0 -> TransactionStatus.CREATE;
+            case 1 -> TransactionStatus.PROCESSING;
+            case 2 -> TransactionStatus.SUCCEED;
+            case 3 -> TransactionStatus.FAILED;
+            case 4 -> TransactionStatus.NOT_VERIFIED;
+            case 5 -> TransactionStatus.REVERSE;
 
             default -> null;
         };

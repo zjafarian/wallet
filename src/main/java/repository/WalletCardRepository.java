@@ -22,4 +22,10 @@ public interface WalletCardRepository extends JpaRepository<WalletCard, Long>, J
 
     List<WalletCard> findWalletCardsByWalletIdAndWalletCardTypeEqualsAndIsDeletedIsFalse(Long walletId,
                                                                                          WalletCardType walletCardType);
+
+
+
+
+    Optional<WalletCard> findWalletCardByIdAndIsDeletedIsFalseAndIsActiveIsTrue(Long walletCardId);
+
 }

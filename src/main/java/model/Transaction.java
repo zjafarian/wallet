@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.Audited;
+
 @Entity
 @Setter
 @Getter
@@ -23,17 +24,21 @@ public class Transaction extends BaseEntity {
     @Column(name = "amount")
     private Long amount;
 
+
+
     @Column(name = "transaction_status")
     @Enumerated(value = EnumType.STRING)
     private TransactionStatus transactionStatus;
 
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne
-    @JoinColumn(name = "wallet_card_id", referencedColumnName="id")
+    @JoinColumn(name = "wallet_card_id", referencedColumnName = "id")
     private WalletCard walletCard;
 
     @ManyToOne
-    @JoinColumn(name = "merchant_id", referencedColumnName="id")
+    @JoinColumn(name = "merchant_id", referencedColumnName = "id")
     private Merchant merchant;
 
 }

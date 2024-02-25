@@ -33,6 +33,7 @@ public class WalletCard extends BaseEntity{
     @NotNull
     private String walletNumber;
 
+
     @Column(name = "wallet_card_type")
     @Enumerated(value = EnumType.STRING)
     private WalletCardType walletCardType;

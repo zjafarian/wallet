@@ -7,9 +7,22 @@ public class ResponsibleRuntimeException extends RuntimeException implements Res
     public boolean directMessage = false;
 
 
+
     public ResponsibleRuntimeException(String message, int code) {
         super(message);
         this.code = code;
+    }
+
+
+    public ResponsibleRuntimeException(String message, Throwable cause, int code) {
+        super(message, cause);
+        this.code = code;
+    }
+
+    public ResponsibleRuntimeException(String message, Throwable cause, int code, String title) {
+        super(message, cause);
+        this.code = code;
+        this.title = title;
     }
 
     @Override
@@ -28,4 +41,12 @@ public class ResponsibleRuntimeException extends RuntimeException implements Res
         return directMessage;
     }
 
+    public void setDirectMessage(Boolean direct) {
+         directMessage=direct;
+    }
+
+    public void setTitle(String titlei) {
+
+        title=titlei;
+    }
 }

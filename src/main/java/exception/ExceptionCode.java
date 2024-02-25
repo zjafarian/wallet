@@ -5,7 +5,15 @@ import base.ValueEnum;
 
 public enum ExceptionCode implements ValueEnum<Integer> {
 
-    NotDefineFinancier(100010);
+    NotDefineFinancier(100010),
+    NotActiveWallet(200010),
+    NotActiveWalletCard(300010),
+    NotActiveProfile(400010),
+    InsufficientFund(500010),
+    NotActiveMerchant(600010),
+    NotFountWallet(700010);
+
+
 
 
     private int code;
@@ -17,7 +25,12 @@ public enum ExceptionCode implements ValueEnum<Integer> {
     public static ExceptionCode valueOf(int code) {
         return switch (code) {
             case 100010 -> ExceptionCode.NotDefineFinancier;
-
+            case 200010 -> ExceptionCode.NotActiveWallet;
+            case 300010 -> ExceptionCode.NotActiveWalletCard;
+            case 400010 -> ExceptionCode.NotActiveProfile;
+            case 500010 -> ExceptionCode.InsufficientFund;
+            case 600010 -> ExceptionCode.NotActiveMerchant;
+            case 700010 -> ExceptionCode.NotFountWallet;
 
 
             default -> null;
@@ -27,6 +40,7 @@ public enum ExceptionCode implements ValueEnum<Integer> {
     public int getCode() {
         return code;
     }
+
 
     @Override
     public Integer fetchVal() {

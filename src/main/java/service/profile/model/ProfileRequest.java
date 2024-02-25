@@ -2,10 +2,14 @@ package service.profile.model;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 import validation.annotation.NationalCode;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class ProfileRequest {
 
 

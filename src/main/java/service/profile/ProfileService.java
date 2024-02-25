@@ -1,6 +1,7 @@
 package service.profile;
 
 
+import exception.BusinessException;
 import lombok.extern.log4j.Log4j2;
 import mapper.ProfileMapper;
 import model.Profile;
@@ -11,7 +12,6 @@ import repository.WalletRepository;
 import service.model.response.ApiResponse;
 import service.profile.model.ProfileRequest;
 
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -60,6 +60,12 @@ public class ProfileService {
 
     public Profile saveProfile(Profile profile) {
         return profileRepository.save(profile);
+    }
+
+
+    public Profile findProfileActiveById(Long profileId){
+      return profileRepository.findProfileByIdAndIsDeletedIsFalseAndIsActiveIsTrue(profileId)
+                .orElseThrow(() -> new BusinessException("profile isn't active by this id :" + profileId, 400010));
     }
 
 

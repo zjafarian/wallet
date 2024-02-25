@@ -30,11 +30,7 @@ public class TransactionLog extends BaseEntity {
 
 
     @ManyToOne
-    @JoinColumn(name = "wallet_card_id", referencedColumnName="id")
-    private WalletCard walletCard;
-
-    @ManyToOne
-    @JoinColumn(name = "merchant_id", referencedColumnName="id")
-    private Merchant merchant;
+    @JoinColumn(name = "transaction_id", referencedColumnName="id")
+    private Transaction transaction;
 
 }

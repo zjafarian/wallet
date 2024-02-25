@@ -28,6 +28,13 @@ public class InMemoryExceptionMapService implements ExceptionMapService {
     @Override
     public void init() {
         addMessage(100010, "تامین کننده مالی باید مشخص شود");
+        addMessage(200010, "کیف پول فعال نیست");
+        addMessage(300010, "کارت فعال نیست");
+        addMessage(400010, "پروفایل کاربر فعال نیست");
+        addMessage(500010, "موجودی کارت کافی نیست");
+        addMessage(600010, "پذیرنده فعال نیست");
+        addMessage(700010, "کیف پول پیدا نشد");
+
 
 
 

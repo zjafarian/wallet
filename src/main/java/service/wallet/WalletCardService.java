@@ -5,14 +5,12 @@ import exception.BusinessException;
 import lombok.extern.log4j.Log4j2;
 import mapper.FinancierMapper;
 import mapper.WalletCardMapper;
-import model.Financier;
-import model.Wallet;
 import model.WalletCard;
 import model.WalletCardType;
 import org.springframework.stereotype.Service;
 import repository.FinancierRepository;
 import repository.WalletCardRepository;
-import service.FinancierService;
+import service.financier.FinancierService;
 import service.model.response.ApiResponse;
 import service.wallet.model.WalletCardRequest;
 
@@ -59,9 +57,7 @@ public class WalletCardService {
         ).orElseGet(() -> {
             debitCardRequest.setWalletCardType(WalletCardType.DebitCard);
             var debitCard = saveWalletCard(walletCardMapper.toWalletCard(debitCardRequest));
-            var wallet = debitCard.getWallet();
-            wallet.setTotalBalance(wallet.getTotalBalance() + debitCard.getBalance());
-            wallet = walletService.saveWallet(wallet);
+            updateWalletBalance(debitCard);
 
             return new ApiResponse(true, debitCard);
         });
@@ -76,12 +72,16 @@ public class WalletCardService {
         var creditCard = walletCardMapper.toWalletCard(creditCardRequest);
         var financier = financierMapper.toFinancier(creditCardRequest.getFinancierRequest());
         creditCard.setFinancier(financier);
-        var wallet = creditCard.getWallet();
         creditCard = saveWalletCard(creditCard);
-        wallet.setTotalBalance(wallet.getTotalBalance() + creditCard.getBalance());
-        wallet = walletService.saveWallet(wallet);
+        updateWalletBalance(creditCard);
         return new ApiResponse(true, creditCard);
 
+    }
+
+    public void updateWalletBalance(WalletCard creditCard) {
+        var wallet = creditCard.getWallet();
+        wallet.setTotalBalance(wallet.getTotalBalance() + creditCard.getBalance());
+        wallet = walletService.saveWallet(wallet);
     }
 
     public Optional<WalletCard> getDebitCardByWalletId(Long walletId) {
@@ -103,5 +103,59 @@ public class WalletCardService {
         return walletCardRepository.save(walletCard);
     }
 
+    public WalletCard findActiveWalletCard(Long walletCardId) {
+        return walletCardRepository.findWalletCardByIdAndIsDeletedIsFalseAndIsActiveIsTrue(walletCardId)
+                .orElseThrow(() -> new BusinessException("walletCard isn't active by this id :" + walletCardId, 300010));
+    }
 
+
+    public Boolean withdrawWalletCard(Long amount, WalletCard walletCard) {
+        if (checkBalance(amount, walletCard)) {
+            var newBalance =   calculateWithdraw.calculateBalance(walletCard.getBalance(),amount);
+            walletCard.setBalance(newBalance);
+            walletCardRepository.save(walletCard);
+            var wallet = walletService.getWallet(walletCard.getWallet().getId())
+                    .orElseThrow(() -> new BusinessException("wallet isn't active by this id :" +
+                            walletCard.getWallet().getId(), 700010));
+
+            wallet.setTotalBalance(calculateWithdraw.calculateBalance(wallet.getTotalBalance(),amount));
+            walletService.updateWallet(wallet);
+
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private Boolean checkBalance(Long amount, WalletCard walletCard) {
+        if (walletCard.getBalance() <= amount ||
+                calculateWithdraw.calculateBalance(walletCard.getBalance(),amount) < 0) {
+            return false;
+        }
+        return true;
+
+    }
+
+
+
+    public void depositWalletCard(Long amount, WalletCard walletCard) {
+        walletCard.setBalance(calculateDeposit.calculateBalance(walletCard.getBalance(),amount));
+        walletCardRepository.save(walletCard);
+        var wallet = walletService.getWallet(walletCard.getWallet().getId())
+                .orElseThrow(() -> new BusinessException("wallet isn't active by this id :" +
+                walletCard.getWallet().getId(), 700010));;
+
+        wallet.setTotalBalance(calculateDeposit.calculateBalance(wallet.getTotalBalance(),amount));
+        walletService.updateWallet(wallet);
+    }
+
+    private final CalculateBalance<Long> calculateWithdraw = (balance, amount) -> balance - amount;
+
+    private final CalculateBalance<Long> calculateDeposit = Long::sum;
+
+}
+
+@FunctionalInterface
+interface CalculateBalance<T> {
+    T calculateBalance(T a, T b);
 }

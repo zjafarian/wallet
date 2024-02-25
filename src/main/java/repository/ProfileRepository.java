@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface ProfileRepository extends JpaRepository<Profile, Long>, JpaSpecificationExecutor<Profile> {
 
     Optional<Profile> findProfileByNationalCodeAndIsDeletedFalse(String nationalCode);
+
+        Optional<Profile> findProfileByIdAndIsDeletedIsFalseAndIsActiveIsTrue(Long profileId);
 }

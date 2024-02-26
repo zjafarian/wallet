@@ -19,6 +19,9 @@ public class FinancierService {
     }
 
     public Financier saveFinancier(Financier financier){
-        return financierRepository.save(financier);
+        log.info("FinancierService ,saveFinancier , financier :{}", financier);
+        var result = financierRepository.save(financier);
+        log.info("FinancierService ,saveFinancier result :{}", result);
+        return result;
     }
 }

@@ -21,12 +21,16 @@ public class MerchantService {
     }
 
     public Merchant findActiveMerchantById(Long merchantId) {
-       return merchantRepository.findMerchantByIdAndIsDeletedIsFalseAndIsActiveIsTrue(merchantId)
-               .orElseThrow(() -> new BusinessException("merchant isn't active by this id :" +
-                       merchantId, 600010));
+        log.info("MerchantService ,findActiveMerchantById , merchantId :{}", merchantId);
+
+        var result =merchantRepository.findMerchantByIdAndIsDeletedIsFalseAndIsActiveIsTrue(merchantId)
+                .orElseThrow(() -> new BusinessException("merchant isn't active by this id :" +
+                        merchantId, 600010));
+
+        log.info("MerchantService ,findActiveMerchantById , result :{}", result);
+       return result;
 
     }
 
-    public void callVerifyMercahntService(Transaction transaction) {
-    }
+
 }

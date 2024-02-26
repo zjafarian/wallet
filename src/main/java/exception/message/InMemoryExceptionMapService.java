@@ -34,6 +34,8 @@ public class InMemoryExceptionMapService implements ExceptionMapService {
         addMessage(500010, "موجودی کارت کافی نیست");
         addMessage(600010, "پذیرنده فعال نیست");
         addMessage(700010, "کیف پول پیدا نشد");
+        addMessage(800010, "کارت پیدا نشد");
+        addMessage(900010, "تراکنش پیدا نشد");
 
 
 

@@ -15,7 +15,7 @@ import repository.TransactionLogRepository;
 import repository.TransactionRepository;
 import service.merchant.MerchantService;
 import service.profile.ProfileService;
-import service.transaction.model.PurchaseRequest;
+import service.transaction.model.TransactionRequest;
 import service.transaction.model.PurchaseResponseModel;
 import service.wallet.WalletCardService;
 import service.wallet.WalletService;
@@ -51,31 +51,42 @@ public class TransactionService {
     }
 
     @Transactional
-    public ResponseEntity<PurchaseResponseModel> requestPurchase(PurchaseRequest purchaseRequest) {
-        var walletCard = validation(purchaseRequest);
-        var merchant = merchantService.findActiveMerchantById(purchaseRequest.getMerchantId());
+    public ResponseEntity<PurchaseResponseModel> requestTransaction(TransactionRequest transactionRequest) {
+        log.info("TransactionService ,requestTransaction , transactionRequest :{}", transactionRequest);
+        var walletCard = validation(transactionRequest);
+        var merchant = merchantService.findActiveMerchantById(transactionRequest.getMerchantId());
         var transaction = Transaction.builder()
                 .transactionStatus(TransactionStatus.CREATE)
                 .description("transaction start")
                 .merchant(merchant)
-                .amount(purchaseRequest.getAmount())
+                .amount(transactionRequest.getAmount())
                 .walletCard(walletCard)
                 .build();
 
         transaction = transactionRepository.save(transaction);
 
+        //save state of a transaction in transactionLog table
         transactionLogRepository.save(TransactionLog.builder()
                 .transactionStatus(TransactionStatus.CREATE)
                 .transaction(transaction).build());
 
+        log.info("TransactionService ,requestTransaction , transaction :{} , state :{}", transaction,
+                transaction.getTransactionStatus());
 
-        if (walletCardService.withdrawWalletCard(purchaseRequest.getAmount(), walletCard)){
+
+        if (walletCardService.withdrawWalletCard(transactionRequest.getAmount(), walletCard)){
+            log.info("TransactionService ,requestTransaction , withdrawWalletCard is ok for this walletCard : {}",walletCard);
+
             transaction.setTransactionStatus(TransactionStatus.PROCESSING);
             transaction = transactionRepository.save(transaction);
 
+            //save state of a transaction in transactionLog table
             transactionLogRepository.save(TransactionLog.builder()
                     .transactionStatus(TransactionStatus.PROCESSING)
                     .transaction(transaction).build());
+
+            log.info("TransactionService ,requestTransaction , transaction :{} , state :{}", transaction,
+                    transaction.getTransactionStatus());
 
 
 
@@ -88,12 +99,18 @@ public class TransactionService {
                     .build(), HttpStatus.OK);
 
         } else {
+
+            log.info("TransactionService ,requestTransaction , withdrawWalletCard isn't ok for this walletCard : {}",walletCard);
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transaction = transactionRepository.save(transaction);
 
+            //save state of a transaction in transactionLog table
             transactionLogRepository.save(TransactionLog.builder()
                     .transactionStatus(TransactionStatus.FAILED)
                     .transaction(transaction).build());
+
+            log.info("TransactionService ,requestTransaction , transaction :{} , state :{}", transaction,
+                    transaction.getTransactionStatus());
 
           return new ResponseEntity(PurchaseResponseModel.builder()
                     .code(0)
@@ -107,12 +124,20 @@ public class TransactionService {
     }
 
     public ResponseEntity<PurchaseResponseModel> verifyTransaction(Transaction transaction) {
+
+        log.info("TransactionService ,verifyTransaction , transaction: {}",transaction);
         transaction.setTransactionStatus(TransactionStatus.SUCCEED);
         transaction = transactionRepository.save(transaction);
 
+        //save state of a transaction in transactionLog table
         transactionLogRepository.save(TransactionLog.builder()
                 .transactionStatus(TransactionStatus.SUCCEED)
                 .transaction(transaction).build());
+
+
+        log.info("TransactionService ,verifyTransaction , transaction :{} , state :{}", transaction,
+                transaction.getTransactionStatus());
+
 
         return new ResponseEntity(PurchaseResponseModel.builder()
                 .code(0)
@@ -125,13 +150,19 @@ public class TransactionService {
 
     @Transactional
     public ResponseEntity<PurchaseResponseModel> reverseTransaction(Transaction transaction) {
+        log.info("TransactionService , reverseTransaction , transaction: {}",transaction);
         walletCardService.depositWalletCard(transaction.getAmount(),transaction.getWalletCard());
         transaction.setTransactionStatus(TransactionStatus.REVERSE);
         transaction = transactionRepository.save(transaction);
 
+        //save state of a transaction in transactionLog table
         transactionLogRepository.save(TransactionLog.builder()
                 .transactionStatus(TransactionStatus.REVERSE)
                 .transaction(transaction).build());
+
+        log.info("TransactionService ,reverseTransaction , transaction :{} , state :{}", transaction,
+                transaction.getTransactionStatus());
+
 
         return new ResponseEntity(PurchaseResponseModel.builder()
                 .code(0)
@@ -147,12 +178,23 @@ public class TransactionService {
 
 
 
-    public WalletCard validation(PurchaseRequest purchaseRequest) {
-        var walletCard = walletCardService.findActiveWalletCard(purchaseRequest.getWalletCardId());
+    public WalletCard validation(TransactionRequest transactionRequest) {
+        log.info("TransactionService , validation , transactionRequest: {}",transactionRequest);
+        var walletCard = walletCardService.findActiveWalletCard(transactionRequest.getWalletCardId());
         var wallet = walletService.findActiveWallet(walletCard.getWallet().getId());
         var profile = profileService.findProfileActiveById(wallet.getProfile().getId());
         return walletCard;
 
+    }
+
+    public Transaction getTransaction(Long transactionId){
+        log.info("TransactionService , getTransaction , transactionId: {}",transactionId);
+        var result = transactionRepository.findTransactionByIdAndIsDeletedIsFalse(transactionId)
+                .orElseThrow(() -> new BusinessException("transaction isn't find by this id :" +
+                        transactionId, 900010));
+
+        log.info("TransactionService , getTransaction , result: {}",result);
+       return result;
     }
 
 

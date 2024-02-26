@@ -11,7 +11,11 @@ public enum ExceptionCode implements ValueEnum<Integer> {
     NotActiveProfile(400010),
     InsufficientFund(500010),
     NotActiveMerchant(600010),
-    NotFountWallet(700010);
+    NotFoundWallet(700010),
+    NotFoundWalletCard(800010),
+    NotFoundTransaction(900010);
+
+
 
 
 
@@ -30,7 +34,9 @@ public enum ExceptionCode implements ValueEnum<Integer> {
             case 400010 -> ExceptionCode.NotActiveProfile;
             case 500010 -> ExceptionCode.InsufficientFund;
             case 600010 -> ExceptionCode.NotActiveMerchant;
-            case 700010 -> ExceptionCode.NotFountWallet;
+            case 700010 -> ExceptionCode.NotFoundWallet;
+            case 800010 -> ExceptionCode.NotFoundWalletCard;
+            case 900010 -> ExceptionCode.NotFoundTransaction;
 
 
             default -> null;

@@ -29,11 +29,6 @@ public class WalletCard extends BaseEntity{
     @Column(name = "balance")
     private Long balance;
 
-    @Column(name = "wallet_number")
-    @NotNull
-    private String walletNumber;
-
-
     @Column(name = "wallet_card_type")
     @Enumerated(value = EnumType.STRING)
     private WalletCardType walletCardType;
